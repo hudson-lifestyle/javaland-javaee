@@ -3,26 +3,41 @@ package org.eclipse.cargotracker.infrastructure.messaging.jms;
 import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.jms.Destination;
 import javax.jms.JMSConnectionFactory;
 import javax.jms.JMSContext;
+import javax.jms.ConnectionFactory;
 import org.eclipse.cargotracker.application.ApplicationEvents;
 import org.eclipse.cargotracker.domain.model.cargo.Cargo;
 import org.eclipse.cargotracker.domain.model.handling.HandlingEvent;
 import org.eclipse.cargotracker.infrastructure.messaging.JmsQueueNames;
 import org.eclipse.cargotracker.interfaces.handling.HandlingEventRegistrationAttempt;
 
+import com.microsoft.azure.servicebus.jms.ServiceBusJmsConnectionFactorySettings;
+import com.microsoft.azure.servicebus.jms.ServiceBusJmsConnectionFactory;
+
 @ApplicationScoped
 public class JmsApplicationEvents implements ApplicationEvents, Serializable {
 
   private static final long serialVersionUID = 1L;
   private static final int LOW_PRIORITY = 0;
-  @Inject 
-  @JMSConnectionFactory("java:comp/DefaultJMSConnectionFactory")
+  //@Inject 
+  //@JMSConnectionFactory("java:comp/DefaultJMSConnectionFactory")
   JMSContext jmsContext;
+
+  @PostConstruct
+  private void postConstruct() {
+    ServiceBusJmsConnectionFactorySettings connFactorySettings = new ServiceBusJmsConnectionFactorySettings();
+    connFactorySettings.setConnectionIdleTimeoutMS(20000);
+    String ServiceBusConnectionString = "REDACTED";
+    ConnectionFactory factory = new ServiceBusJmsConnectionFactory(ServiceBusConnectionString, connFactorySettings);
+    jmsContext = factory.createContext();
+  }
 
   @Resource(lookup = JmsQueueNames.CARGO_HANDLED_QUEUE)
   private Destination cargoHandledQueue;

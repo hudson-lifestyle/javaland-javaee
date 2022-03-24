@@ -34,6 +34,7 @@
         <jakartaee-api.version>8.0.0</jakartaee-api.version>
 
         <arquillian-bom.version>1.6.0.Final</arquillian-bom.version>
+        <azure.jms.version>0.0.9</azure.jms.version>
 
         <!-- Test Utilities -->
         <junit.version>4.13.1</junit.version>
@@ -47,6 +48,13 @@
 
     <dependencyManagement>
         <dependencies>
+
+            <dependency>
+                <groupId>com.microsoft.azure</groupId>
+                <artifactId>azure-servicebus-jms</artifactId>
+                <version>${azure.jms.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>jakarta.platform</groupId>
                 <artifactId>jakarta.jakartaee-api</artifactId>
@@ -109,6 +117,11 @@
             <groupId>org.primefaces</groupId>
             <artifactId>primefaces</artifactId>
             <version>8.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.microsoft.azure</groupId>
+            <artifactId>azure-servicebus-jms</artifactId>
         </dependency>
 
         <!-- Test dependencies -->
@@ -452,7 +465,14 @@
                                 <configuration>
                                     <libertyRuntimeVersion>[20.0.0.1,)</libertyRuntimeVersion>
                                     <outputDirectory>${project.build.directory}/wlp-package</outputDirectory>
-                                </configuration>
+                                        <copyDependencies>
+                                            <dependency>
+                                                <groupId>com.microsoft.azure</groupId>
+                                                <artifactId>azure-servicebus-jms</artifactId>
+                                                <version>${azure.jms.version}</version>
+                                            </dependency>                        
+                                        </copyDependencies>    
+                                    </configuration>
                             </execution>
                         </executions>
                     </plugin>
