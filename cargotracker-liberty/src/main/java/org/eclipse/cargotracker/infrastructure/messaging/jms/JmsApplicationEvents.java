@@ -33,10 +33,22 @@ public class JmsApplicationEvents implements ApplicationEvents, Serializable {
   @PostConstruct
   private void postConstruct() {
     ServiceBusJmsConnectionFactorySettings connFactorySettings = new ServiceBusJmsConnectionFactorySettings();
+    System.out.println("debug: edburns: connFactorySettings: " + connFactorySettings);
     connFactorySettings.setConnectionIdleTimeoutMS(20000);
-    String ServiceBusConnectionString = "REDACTED";
-    ConnectionFactory factory = new ServiceBusJmsConnectionFactory(ServiceBusConnectionString, connFactorySettings);
+    System.out.println("debug: edburns: timeOut set.");
+    String ServiceBusConnectionString = "REEDACTED";
+    ConnectionFactory factory = null;
+    try {
+      System.out.println("debug: edburns: about to create ServiceBusJmsConnectionFactory");
+      factory = new ServiceBusJmsConnectionFactory(ServiceBusConnectionString, connFactorySettings);
+    } catch (Exception e) {
+      System.out.println("debug: edburns: exception: " + e.getMessage());
+    }
+
+    System.out.println("debug: edburns: factory: " + factory);
+
     jmsContext = factory.createContext();
+    System.out.println("debug: edburns: jmsContext: " + jmsContext);    
   }
 
   @Resource(lookup = JmsQueueNames.CARGO_HANDLED_QUEUE)
